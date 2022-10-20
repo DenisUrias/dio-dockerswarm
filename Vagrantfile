@@ -12,6 +12,10 @@ $script_manager = <<-SCRIPT
   sudo chmod +x /configs/token.sh
 SCRIPT
 
+$script_node = <<-SCRIPT
+  cd /configs && \
+  ./token.sh
+SCRIPT
 
 
 Vagrant.configure("2") do |config|
@@ -29,5 +33,20 @@ Vagrant.configure("2") do |config|
         vb.memory = "1024"
         vb.cpus = "1"
         
+  end
+
+  (1..2).each do |i|
+    config.vm.define "node0#{i}" do |node|
+      node.vm.hostname "node0#{i}"
+      node.vm.network "public_network", ip: "192.168.1.10#{i}"
+      node.vm.synced_folder ".", "/configs"
+      node.vm.synced_folder ".", "/vagrant", disabled: true
+      node.vm.provision "shell", inline: $script_docker
+      node.vm.provision "shell", inline: $script_node
+      node.vm.provider "virtualbox" do |vb|
+         vb.name = "node0#{i}"
+         vb.memory = "1024"
+         vb.cpus = "1"
+    end
   end
 end
