@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
     master.vm.synced_folder ".", "/configs"
     master.vm.synced_folder ".", "/vagrant", disabled: true
     master.vm.provision "shell", inline: $script_docker
-    master.vm.provision "shell," inline: $script_manager
+    master.vm.provision "shell", inline: $script_manager
     master.vm.provider "virtualbox" do |vb|
         vb.name = "master"
         vb.memory = "1024"
